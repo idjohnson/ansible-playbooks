@@ -1,0 +1,33 @@
+---
+- name: Install Cloud Custodian
+  hosts: all
+
+  tasks:
+  - name: Instally Python3
+    ansible.builtin.shell: |
+      apt-get install python3 python3-venv python3-pip
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Check Version
+    ansible.builtin.shell: |
+      python3 -m pip --version
+    args:
+      chdir: /tmp
+
+  - name: Instally Custodian locally
+    ansible.builtin.shell: |
+      umask 0002
+      python3 -m venv custodian
+      source custodian/bin/activate
+      pip install c7n  
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Pull Docker Image
+    ansible.builtin.shell: |
+      docker pull cloudcustodian/c7n  
+    args:
+      chdir: /tmp
