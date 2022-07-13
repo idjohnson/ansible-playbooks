@@ -3,7 +3,24 @@
   hosts: all
 
   tasks:
-  - name: Instally Python3
+  - name: test2
+    ansible.builtin.shell: |
+      whoami
+      pwd
+    args:
+      chdir: /tmp
+
+  - name: test2
+    ansible.builtin.shell: |
+      whoami
+      pwd
+    become: true
+    args:
+      chdir: /tmp
+
+      
+
+  - name: Install Python3
     ansible.builtin.shell: |
       apt-get install python3 python3-venv python3-pip
     become: true
@@ -16,7 +33,7 @@
     args:
       chdir: /tmp
 
-  - name: Instally Custodian locally
+  - name: Install Custodian locally
     ansible.builtin.shell: |
       umask 0002
       python3 -m venv custodian
