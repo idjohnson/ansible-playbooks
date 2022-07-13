@@ -26,6 +26,17 @@
     args:
       chdir: /tmp
 
+  - name: Add Cloud Modules to Local
+    ansible.builtin.shell: |
+      umask 0002
+      python3 -m venv custodian
+      source custodian/bin/activate
+      pip install c7n-azure  
+      pip install c7n-gcp  
+    become: true
+    args:
+      chdir: /tmp
+
   - name: Pull Docker Image
     ansible.builtin.shell: |
       docker pull cloudcustodian/c7n  
