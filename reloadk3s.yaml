@@ -5,6 +5,12 @@
   tasks:
   - name: Install Python3
     ansible.builtin.shell: |
+      whoami
+    args:
+      chdir: /tmp
+
+  - name: Install Python3
+    ansible.builtin.shell: |
       apt-get install -y python3 python3-venv python3-pip
     become: true
     args:
