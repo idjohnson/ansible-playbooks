@@ -1,0 +1,24 @@
+---
+- name: Reload K3s
+  hosts: all
+
+  tasks:
+  - name: Install Python3
+    ansible.builtin.shell: |
+      apt-get install -y python3 python3-venv python3-pip
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Install Cifs and iscsi
+    ansible.builtin.shell: |
+      apt-get install -y cifs-utils open-iscsi
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Add AWS CLI
+    ansible.builtin.shell: |
+      apt-get install -y awscli s3fs
+    args:
+      chdir: /tmp
