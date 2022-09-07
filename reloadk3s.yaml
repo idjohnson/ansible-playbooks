@@ -6,6 +6,7 @@
   - name: Install Python3
     ansible.builtin.shell: |
       whoami
+      pwd
     args:
       chdir: /tmp
 
