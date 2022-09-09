@@ -27,10 +27,11 @@
   - name: Install GCP Fuse
     ansible.builtin.shell: |
       export GCSFUSE_REPO=gcsfuse-`lsb_release -c -s`
+      rm -f /etc/apt/sources.list.d/gcsfuse.list || true
       echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list
       curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
       apt-get update
-      apt-get install -y gcfuse
+      apt-get install -y gcsfuse
     become: true
     args:
       chdir: /tmp
