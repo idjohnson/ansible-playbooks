@@ -68,6 +68,6 @@
       pwd
       ifconfig | grep 192
       echo "TEST1"
-      echo {{ hostvars['AnnaMacbook']['nodetokenresult'] }}
+      echo {{ hostvars['AnnaMacbook']['nodetokenresult'].stdout }}
       echo "TEST2"
-      echo {{ hostvars['AnnaMacbook']['factnodetoken'] }}
+      echo {{ hostvars['AnnaMacbook']['factnodetoken'].stdout }}
