@@ -53,7 +53,7 @@
 
       
 - name: Update Workers
-  hosts: !AnnaMacbook
+  hosts: all:!AnnaMacbook
 
   tasks:
   - name: Test host
