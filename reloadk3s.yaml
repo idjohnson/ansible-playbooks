@@ -55,11 +55,10 @@
     args:
       chdir: /tmp
 
-  - name: Set Global Var
-    setglobal: name=myglobaltoken value="{{nodetokenresult}}"
+  - name: Set Fact Var
+    set_fact: factnodetoken="{{nodetokenresult}}"
       
-
-      
+     
 - name: Update Workers
   hosts: builder-MacBookPro2:isaac-MacBookPro
 
@@ -71,4 +70,4 @@
       echo "TEST1"
       echo {{ hostvars['AnnaMacbook']['nodetokenresult'] }}
       echo "TEST2"
-      echo {{ myglobaltoken }}
+      echo {{ hostvars['AnnaMacbook']['factnodetoken'] }}
