@@ -49,8 +49,15 @@
   tasks:
   - name: Test host
     ansible.builtin.shell: |
-      pwd
-      ifconfig | grep 192
+      cat /var/lib/rancher/k3s/server/node-token | tr -d '\n'
+    register: nodetokenresult
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Set Global Var
+    setglobal: name=myglobaltoken value="{{nodetokenresult}}"
+      
 
       
 - name: Update Workers
@@ -61,3 +68,7 @@
     ansible.builtin.shell: |
       pwd
       ifconfig | grep 192
+      echo "TEST1"
+      echo {{ hostvars['AnnaMacbook']['nodetokenresult'] }}
+      echo "TEST2"
+      echo {{ myglobaltoken }}
