@@ -53,7 +53,7 @@
 
       
 - name: Update Workers
-  hosts: all:!AnnaMacbook
+  hosts: builder-MacBookPro2:isaac-MacBookPro
 
   tasks:
   - name: Test host
