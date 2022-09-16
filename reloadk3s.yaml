@@ -41,3 +41,22 @@
       apt-get install -y awscli s3fs
     args:
       chdir: /tmp
+
+- name: Update Primary
+  hosts: AnnaMacbook
+
+  tasks:
+  - name: Test host
+    ansible.builtin.shell: |
+      pwd
+      ifconfig | grep 192
+
+      
+- name: Update Workers
+  hosts: !AnnaMacbook
+
+  tasks:
+  - name: Test host
+    ansible.builtin.shell: |
+      pwd
+      ifconfig | grep 192
