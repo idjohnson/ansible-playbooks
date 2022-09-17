@@ -27,5 +27,6 @@
   - name: Add AWS CLI
     ansible.builtin.shell: |
       apt-get install -y awscli s3fs
+    become: true
     args:
       chdir: /tmp
