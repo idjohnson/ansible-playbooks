@@ -1,0 +1,22 @@
+
+- name: Scrub K3s
+  hosts: all
+
+  tasks:
+  - name: Uninstall previous k3s
+    ansible.builtin.shell: |
+      /usr/local/bin/k3s-uninstall.sh &
+      /usr/local/bin/k3s-agent-uninstall.sh &
+      sleep 10
+    become: true
+    ignore_errors: True
+    args:
+      chdir: /tmp
+
+  - name: reboot
+    ansible.builtin.shell: |
+      reboot now
+    become: true
+    ignore_errors: True
+    args:
+      chdir: /tmp

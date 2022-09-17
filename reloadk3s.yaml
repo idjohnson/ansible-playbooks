@@ -24,9 +24,97 @@
     args:
       chdir: /tmp
 
+  - name: Install GCP Fuse
+    ansible.builtin.shell: |
+      export GCSFUSE_REPO=gcsfuse-`lsb_release -c -s`
+      rm -f /etc/apt/sources.list.d/gcsfuse.list || true
+      echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list
+      curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+      apt-get update
+      apt-get install -y gcsfuse
+    become: true
+    args:
+      chdir: /tmp
+
   - name: Add AWS CLI
     ansible.builtin.shell: |
       apt-get install -y awscli s3fs
     become: true
     args:
       chdir: /tmp
+
+- name: Update Primary
+  hosts: AnnaMacbook
+
+  tasks:
+  - name: Uninstall previous k3s
+    ansible.builtin.shell: |
+      /usr/local/bin/k3s-uninstall.sh || true
+      /usr/local/bin/k3s-agent-uninstall.sh || true
+    become: true
+    args:
+      chdir: /tmp
+      
+  - name: Install K3s
+    ansible.builtin.shell: |
+      curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.23.10%2Bk3s1" K3S_KUBECONFIG_MODE="644" INSTALL_K3S_EXEC="--tls-san 73.242.50.46" sh -
+    become: true
+    args:
+      chdir: /tmp
+      
+  - name: Test host
+    ansible.builtin.shell: |
+      cat /var/lib/rancher/k3s/server/node-token | tr -d '\n'
+    register: nodetokenresult
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Output Kubeconfig
+    ansible.builtin.shell: |
+      cat /etc/rancher/k3s/k3s.yaml | sed 's/127.0.0.1/192.168.1.81/g' | base64 -w 0
+    register: kubeconfig
+    become: true
+    args:
+      chdir: /tmp
+      
+  - name: Prep Config
+    ansible.builtin.shell: |
+      cat /etc/rancher/k3s/k3s.yaml | sed 's/127.0.0.1:[0-9]*/73.242.50.46:25460/g' > /tmp/mac81-ext
+      cat /etc/rancher/k3s/k3s.yaml | sed 's/127.0.0.1/192.168.1.81/g' > /tmp/mac81-int
+    register: kubeconfig
+    become: true
+    args:
+      chdir: /tmp
+     
+  - name: Set Config in Azure KV
+    ansible.builtin.shell: |
+      az keyvault secret set --vault-name idjakv --name mac81-int --file /tmp/mac81-int || true
+      az keyvault secret set --vault-name idjakv --name mac81-ext --file /tmp/mac81-ext || true
+    register: kubeconfig
+    become: true
+    args:
+      chdir: /tmp
+
+- name: Update Workers
+  hosts: builder-MacBookPro2:isaac-MacBookPro
+
+  tasks:
+  - name: Uninstall previous k3s
+    ansible.builtin.shell: |
+      /usr/local/bin/k3s-agent-uninstall.sh || true
+      /usr/local/bin/k3s-uninstall.sh || true
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Test host
+    ansible.builtin.shell: |
+      pwd
+      ifconfig | grep 192
+      echo "TEST1"
+      echo {{ hostvars['AnnaMacbook']['nodetokenresult'].stdout }}
+
+  - name: Install k3s Agent
+    ansible.builtin.shell: |
+      curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.23.10%2Bk3s1" K3S_URL=https://192.168.1.81:6443 K3S_TOKEN={{ hostvars['AnnaMacbook']['nodetokenresult'].stdout }} sh -
