@@ -1,0 +1,22 @@
+
+- name: Scrub K3s
+  hosts: all
+
+  tasks:
+  - name: Uninstall previous k3s
+    ansible.builtin.shell: |
+      iptables -I INPUT -p all -s 192.168.1.205 -j ACCEPT
+      iptables -I INPUT -p all -s 192.168.1.159 -j ACCEPT
+      iptables -I INPUT -p all -s 192.168.1.81 -j ACCEPT
+    become: true
+    ignore_errors: True
+    args:
+      chdir: /tmp
+
+  - name: reboot
+    ansible.builtin.shell: |
+      reboot now
+    become: true
+    ignore_errors: True
+    args:
+      chdir: /tmp
