@@ -110,7 +110,7 @@
 
   - name: Test host
     ansible.builtin.shell: |
-      pwd
+      pwd  
       ifconfig | grep 192
       echo "TEST1"
       echo {{ hostvars['AnnaMacbook']['nodetokenresult'].stdout }}
