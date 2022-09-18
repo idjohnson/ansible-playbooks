@@ -44,6 +44,7 @@
 - name: Volume Create and Start on Primary
   hosts: AnnaMacbook
 
+  tasks:
   - name: Create GV0 Volume
     ansible.builtin.shell: |
        gluster volume create gv0 replica 3 192.168.1.81:/mnt/glusterfs/brick1/gv0 192.168.1.159:/mnt/glusterfs/brick1/gv0 192.168.1.205:/mnt/glusterfs/brick1/gv0
