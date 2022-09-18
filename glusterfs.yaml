@@ -3,20 +3,59 @@
   hosts: all
 
   tasks:
-  - name: Uninstall previous k3s
+  - name: Set IPTables entry (if Firewall enabled)
     ansible.builtin.shell: |
       iptables -I INPUT -p all -s 192.168.1.205 -j ACCEPT
       iptables -I INPUT -p all -s 192.168.1.159 -j ACCEPT
       iptables -I INPUT -p all -s 192.168.1.81 -j ACCEPT
     become: true
     ignore_errors: True
-    args:
-      chdir: /tmp
 
-  - name: reboot
+  - name: Install glusterfs server
     ansible.builtin.shell: |
-      reboot now
+       apt update
+       apt install -y glusterfs-server
     become: true
-    ignore_errors: True
-    args:
-      chdir: /tmp
+
+  - name: GlusterFS server - Start and check status
+    ansible.builtin.shell: |
+       service glusterd start
+       sleep 5
+       service glusterd status
+    become: true
+
+  - name: GlusterFS Peer Probe
+    ansible.builtin.shell: |
+       gluster peer probe 192.168.1.81
+       gluster peer probe 192.168.1.159
+       gluster peer probe 192.168.1.205
+    become: true
+
+  - name: GlusterFS Peer Status
+    ansible.builtin.shell: |
+       gluster peer status
+    become: true
+
+  - name: Create First Brick
+    ansible.builtin.shell: |
+       mkdir -p /mnt/glusterfs/brick1/gv0
+    become: true
+
+- name: Volume Create and Start on Primary
+  hosts: AnnaMacbook
+
+  - name: Create GV0 Volume
+    ansible.builtin.shell: |
+       gluster volume create gv0 replica 3 192.168.1.81:/mnt/glusterfs/brick1/gv0 192.168.1.159:/mnt/glusterfs/brick1/gv0 192.168.1.205:/mnt/glusterfs/brick1/gv0
+    become: true
+
+  - name: Start GV0 Volume
+    ansible.builtin.shell: |
+       gluster volume start gv0
+       gluster volume info
+    become: true
+
+  - name: Check Status of Volume
+    ansible.builtin.shell: |
+       gluster volume info
+    become: true
