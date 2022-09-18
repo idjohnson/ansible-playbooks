@@ -24,17 +24,6 @@
        service glusterd status
     become: true
 
-  - name: GlusterFS Peer Probe
-    ansible.builtin.shell: |
-       gluster peer probe 192.168.1.81
-       gluster peer probe 192.168.1.159
-       gluster peer probe 192.168.1.205
-    become: true
-
-  - name: GlusterFS Peer Status
-    ansible.builtin.shell: |
-       gluster peer status
-    become: true
 
   - name: Create First Brick
     ansible.builtin.shell: |
@@ -45,6 +34,19 @@
   hosts: AnnaMacbook
 
   tasks:
+  - name: GlusterFS Peer Probe
+    ansible.builtin.shell: |
+       gluster peer probe 192.168.1.81
+       gluster peer probe 192.168.1.159
+       gluster peer probe 192.168.1.205
+    become: true
+    ignore_errors: True
+
+  - name: GlusterFS Peer Status
+    ansible.builtin.shell: |
+       gluster peer status
+    become: true
+
   - name: Create GV0 Volume
     ansible.builtin.shell: |
        gluster volume create gv0 replica 3 192.168.1.81:/mnt/glusterfs/brick1/gv0 192.168.1.159:/mnt/glusterfs/brick1/gv0 192.168.1.205:/mnt/glusterfs/brick1/gv0
