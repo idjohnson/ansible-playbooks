@@ -1,5 +1,5 @@
 
-- name: Scrub K3s
+- name: Install and Configure GlusterFS
   hosts: all
 
   tasks:
