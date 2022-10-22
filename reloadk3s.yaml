@@ -87,6 +87,8 @@
 
   - name: Prep Config
     ansible.builtin.shell: |
+      rm -f /tmp/mac81-ext || true
+      rm -f /tmp/mac81-int || true
       cat /etc/rancher/k3s/k3s.yaml | sed 's/127.0.0.1:[0-9]*/73.242.50.46:25460/g' > /tmp/mac81-ext
       cat /etc/rancher/k3s/k3s.yaml | sed 's/127.0.0.1/192.168.1.81/g' > /tmp/mac81-int
     register: kubeconfig
