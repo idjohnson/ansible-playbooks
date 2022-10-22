@@ -78,14 +78,18 @@
     args:
       chdir: /tmp
       
+  - name: Clean prior kubeconfigs
+    ansible.builtin.shell: |
+      rm -f /tmp/mac81-* || true
+    become: true
+    args:
+      chdir: /tmp
+
   - name: Prep Config
     ansible.builtin.shell: |
-      rm -f /tmp/mac81-ext || true
-      rm -f /tmp/mac81-int || true
       cat /etc/rancher/k3s/k3s.yaml | sed 's/127.0.0.1:[0-9]*/73.242.50.46:25460/g' > /tmp/mac81-ext
       cat /etc/rancher/k3s/k3s.yaml | sed 's/127.0.0.1/192.168.1.81/g' > /tmp/mac81-int
     register: kubeconfig
-    become: true
     args:
       chdir: /tmp
      
@@ -94,6 +98,23 @@
       az keyvault secret set --vault-name idjakv --name mac81-int --file /tmp/mac81-int || true
       az keyvault secret set --vault-name idjakv --name mac81-ext --file /tmp/mac81-ext || true
     register: kubeconfig
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: copy perl script
+    ansible.builtin.copy:
+      src: updateKConfigs.pl
+      dest: /tmp/updateKConfigs.pl
+      owner: builder
+      mode: '0755'
+
+  - name: Update Combined
+    ansible.builtin.shell: |      
+      az keyvault secret show --vault-name idjakv --name k3sremoteconfig | jq -r .value > /tmp/existing.yaml
+      perl /tmp/updateKConfigs.pl /tmp/existing.yaml /tmp/mac81-int /tmp/updated.yaml
+      az keyvault secret set --vault-name idjakv --name k3sremoteconfig --file /tmp/updated.yaml || true
+    register: kubeconfigall
     become: true
     args:
       chdir: /tmp
