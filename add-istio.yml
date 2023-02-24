@@ -1,0 +1,40 @@
+---
+- name: Update On Primary
+  hosts: AnnaMacbook
+
+  tasks:
+  - name: Install Helm
+    ansible.builtin.shell: |
+      curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null
+      apt-get install apt-transport-https --yes
+      echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
+      apt-get update
+      apt-get install helm
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Install Istio Base
+    ansible.builtin.shell: |
+      helm install istio-base istio/base -n istio-system --create-namespace
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Install Istio Discovery
+    ansible.builtin.shell: |
+      helm install istiod istio/istiod -n istio-system --wait
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Install Istio Ingress
+    ansible.builtin.shell: |
+      kubectl create namespace istio-ingress
+      kubectl label namespace istio-ingress istio-injection=enabled
+      helm install istio-ingress istio/gateway -n istio-ingress --wait
+    become: true
+    args:
+      chdir: /tmp
+
+
