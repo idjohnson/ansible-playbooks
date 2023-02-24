@@ -11,14 +11,11 @@
 
       export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
-      export AZURE_CERT_MANAGER_SP_APP_ID=`az keyvault secret show --vault-name idjhomelabakv --name azure-payg-dnssp-client-id -o json | jq -r .value | tr -d '\n'`
       export AZURE_CERT_MANAGER_SP_PASSWORD=`az keyvault secret show --vault-name idjhomelabakv --name azure-payg-dnssp-client-pass -o json | jq -r .value | tr -d '\n'`
-      export AZURE_SUBSCRIPTION_ID=`az keyvault secret show --vault-name idjhomelabakv --name azure-payg-dnssp-client-subid -o json | jq -r .value | tr -d '\n'`
-      export AZURE_TENANT_ID=`az keyvault secret show --vault-name idjhomelabakv --name azure-payg-dnssp-client-tenantid -o json | jq -r .value | tr -d '\n'`
-      export AZURE_DNS_ZONE_RESOURCE_GROUP="idjDNSrg"
-      export AZURE_DNS_ZONE="tpk.life"
 
       kubectl create secret generic azuredns-config --from-literal=client-secret=$AZURE_CERT_MANAGER_SP_PASSWORD
+      # for cert requests, needs to exist in Cert Manager namespace
+      kubectl create secret -n cert-manager generic azuredns-config --from-literal=client-secret=$AZURE_CERT_MANAGER_SP_PASSWORD
     become: true
     args:
       chdir: /
