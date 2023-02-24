@@ -12,6 +12,14 @@
       apt-get install helm
     become: true
     args:
+      chdir: /
+      
+  - name: Add Istio Helm Repo
+    ansible.builtin.shell: |
+      helm repo add istio https://istio-release.storage.googleapis.com/charts
+      helm repo update
+    become: true
+    args:
       chdir: /tmp
 
   - name: Install Istio Base
