@@ -24,6 +24,7 @@
 
   - name: Install Istio Base
     ansible.builtin.shell: |
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
       helm install istio-base istio/base -n istio-system --create-namespace
     become: true
     args:
@@ -31,6 +32,7 @@
 
   - name: Install Istio Discovery
     ansible.builtin.shell: |
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
       helm install istiod istio/istiod -n istio-system --wait
     become: true
     args:
@@ -38,6 +40,7 @@
 
   - name: Install Istio Ingress
     ansible.builtin.shell: |
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
       kubectl create namespace istio-ingress
       kubectl label namespace istio-ingress istio-injection=enabled
       helm install istio-ingress istio/gateway -n istio-ingress --wait
