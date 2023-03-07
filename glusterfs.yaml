@@ -5,11 +5,10 @@
   tasks:
   - name: Set IPTables entry (if Firewall enabled)
     ansible.builtin.shell: |
-      iptables -I INPUT -p all -s 192.168.1.205 -j ACCEPT
-      iptables -I INPUT -p all -s 192.168.1.159 -j ACCEPT
-      iptables -I INPUT -p all -s 192.168.1.81 -j ACCEPT
+      iptables -I INPUT -p all -s {{ item.name }} -j ACCEPT
     become: true
     ignore_errors: True
+    loop: "{{ hosts }}"
 
   - name: Install glusterfs server
     ansible.builtin.shell: |
@@ -36,11 +35,12 @@
   tasks:
   - name: GlusterFS Peer Probe
     ansible.builtin.shell: |
-       gluster peer probe 192.168.1.81
-       gluster peer probe 192.168.1.159
-       gluster peer probe 192.168.1.205
+       gluster peer probe {{ item.name }}
+       gluster peer probe {{ item.name }}
+       gluster peer probe {{ item.name }}
     become: true
     ignore_errors: True
+    loop: "{{ hosts }}"
 
   - name: GlusterFS Peer Status
     ansible.builtin.shell: |
@@ -49,7 +49,7 @@
 
   - name: Create GV0 Volume
     ansible.builtin.shell: |
-       gluster volume create gv0 replica 3 192.168.1.81:/mnt/glusterfs/brick1/gv0 192.168.1.159:/mnt/glusterfs/brick1/gv0 192.168.1.205:/mnt/glusterfs/brick1/gv0
+       gluster volume create gv0 replica 3 {{ hosts[0].name }}:/mnt/glusterfs/brick1/gv0 {{ hosts[1].name }}:/mnt/glusterfs/brick1/gv0 {{ hosts[2].name }}:/mnt/glusterfs/brick1/gv0
     become: true
 
   - name: Start GV0 Volume
