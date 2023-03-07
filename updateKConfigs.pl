@@ -1,7 +1,7 @@
 #!/bin/perl
 #
 
-my ($combined,$newint,$output) = @ARGV;
+my ($combined,$newint,$output,$newLocal,$newRemote,$newPort) = @ARGV;
 
 open(FILEH,"$combined");
 @filec = <FILEH>;
@@ -16,13 +16,19 @@ for (my $i = 0; $i < scalar(@filec); $i += 1)
 	#	print "$i\n";
 
 	#  certificate-authority-data
-	if (($filec[$i] =~ /server: https:\/\/73.242.50.46:25460/)||($filec[$i] =~ /server: https:\/\/192.168.1.81:6443/))
+	if (($filec[$i] =~ /server: https:\/\/73.242.50.46:25460/)||($filec[$i] =~ /server: https:\/\/192.168.1.81:6443/)||($filec[$i] =~ /server: https:\/\/$newRemote:$newPort/)||($filec[$i] =~ /server: https:\/\/$newLocal:6443/))
 	{
 		#print $filec[($i - 1)];
 		$filec[($i - 1)] =~ s/^(.*)data: .*/\1data: /;
 		chomp($filec[($i - 1)]);
 		#	print $filec[($i - 1)] . $newcad;
 	        $filec[($i - 1)] .= $newcad;
+		# Now fix the Server IP and Ports if we changed
+		if ($filec[$i] =~ /server: https:\/\/192/) {
+			$filec[$i] =~ s/https:\/\/.*/https:\/\/$newLocal:6443/;
+		} else {
+			$filec[$i] =~ s/https:\/\/.*/https:\/\/$newRemote:$newPort/;
+		}
 	}
 	# client cert and key data
 	if ($filec[$i] =~ /^- name: mac81/) {
