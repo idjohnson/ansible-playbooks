@@ -29,7 +29,7 @@
       export APPKEY=`az keyvault secret show --vault-name idjhomelabakv --name ddappkey -o json | jq -r .value | tr -d '\n'`
       
       # Create Helm Values
-      cat >ddvalues2.yaml <<EOF
+      cat >/tmp/ddvalues2.yaml <<EOF
       agents:
         rbac:
           create: true
@@ -74,7 +74,7 @@
       targetSystem: linux
       EOF
 
-      helm install my-dd-release -f ddvalues2.yml datadog/datadog      
+      helm install my-dd-release -f /tmp/ddvalues2.yaml datadog/datadog      
     args:
       chdir: /tmp
 
