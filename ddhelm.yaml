@@ -1,0 +1,107 @@
+---
+- name: Setup Datadog
+  hosts: all
+
+  tasks:
+  - name: Create Initial DD Values Templates 
+    ansible.builtin.shell: |
+      cat >ddvalues.yaml<<'EOT'
+      agents:
+        rbac:
+          create: true
+          serviceAccountName: default
+      clusterAgent:
+        metricsProvider:
+          createReaderRbac: true
+          enabled: true
+          service:
+            port: 8443
+            type: ClusterIP
+          useDatadogMetrics: true
+        rbac:
+          create: true
+          serviceAccountName: default
+        replicas: 2
+      clusterChecksRunner:
+        enabled: true
+        rbac:
+          create: true
+          serviceAccountName: default
+        replicas: 2
+      datadog:
+        apiKeyExistingSecret: dd-secret
+        apm:
+          enabled: true
+          port: 8126
+          portEnabled: true
+        appKey: MYAPPKEY
+        clusterName: MYCLUSTERNAME
+        logs:
+          containerCollectAll: true
+          enabled: true
+        networkMonitoring:
+          enabled: true
+        orchestratorExplorer:
+          enabled: true
+        processAgent:
+          enabled: true
+          processCollection: true
+        tags: []
+      targetSystem: linux
+      EOT
+      pwd
+      
+      export APPKEY=`az keyvault secret show --vault-name idjhomelabakv --name ddappkey -o json | jq -r .value | tr -d '\n'`
+      
+      cat >ddvalues2.yaml<<"EOF"
+      agents:
+        rbac:
+          create: true
+          serviceAccountName: default
+      clusterAgent:
+        metricsProvider:
+          createReaderRbac: true
+          enabled: true
+          service:
+            port: 8443
+            type: ClusterIP
+          useDatadogMetrics: true
+        rbac:
+          create: true
+          serviceAccountName: default
+        replicas: 2
+      clusterChecksRunner:
+        enabled: true
+        rbac:
+          create: true
+          serviceAccountName: default
+        replicas: 2
+      datadog:
+        apiKeyExistingSecret: dd-secret
+        apm:
+          enabled: true
+          port: 8126
+          portEnabled: true
+        appKey: $APPKEY
+        clusterName: {{ clusterName }}
+        logs:
+          containerCollectAll: true
+          enabled: true
+        networkMonitoring:
+          enabled: true
+        orchestratorExplorer:
+          enabled: true
+        processAgent:
+          enabled: true
+          processCollection: true
+        tags: []
+      targetSystem: linux
+      EOF
+
+      echo kubectl create secret generic my-dd-apikey--from-literal=api-key=`az keyvault secret show --vault-name idjhomelabakv --name ddapikey -o json | jq -r .value | tr -d '\n'`
+
+      cat ddvalues2.yaml
+
+    args:
+      chdir: /tmp
+
