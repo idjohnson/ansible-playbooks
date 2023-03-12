@@ -53,7 +53,7 @@
       
       export APPKEY=`az keyvault secret show --vault-name idjhomelabakv --name ddappkey -o json | jq -r .value | tr -d '\n'`
       
-      cat >ddvalues2.yaml<<"EOF"
+      cat >ddvalues2.yaml <<EOF
       agents:
         rbac:
           create: true
@@ -82,7 +82,7 @@
           enabled: true
           port: 8126
           portEnabled: true
-        appKey: $APPKEY
+        appKey: ${APPKEY}
         clusterName: {{ clusterName }}
         logs:
           containerCollectAll: true
