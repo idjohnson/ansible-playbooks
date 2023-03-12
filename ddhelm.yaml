@@ -13,6 +13,7 @@
 
   - name: Create DD Secret 
     ansible.builtin.shell: |
+      kubectl delete secret my-dd-apikey || true
       kubectl create secret generic my-dd-apikey --from-literal=api-key=$(az keyvault secret show --vault-name idjhomelabakv --name ddapikey -o json | jq -r .value | tr -d '\n')
 
   - name: Add DD Repo
