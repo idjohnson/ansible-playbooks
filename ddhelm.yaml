@@ -54,7 +54,7 @@
           serviceAccountName: default
         replicas: 2
       datadog:
-        apiKeyExistingSecret: dd-secret
+        apiKeyExistingSecret: my-dd-apikey
         apm:
           enabled: true
           port: 8126
