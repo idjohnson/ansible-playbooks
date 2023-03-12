@@ -75,6 +75,7 @@
       targetSystem: linux
       EOF
 
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
       helm install my-dd-release -f /tmp/ddvalues2.yaml datadog/datadog      
     args:
       chdir: /tmp
