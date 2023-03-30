@@ -1,0 +1,28 @@
+---
+- name: Install Cloud Custodian Docker
+  hosts: all
+
+  tasks:
+  - name: Install dockerio
+    ansible.builtin.shell: |
+      apt update
+      apt install -y docker.io
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Install docker snap
+    ansible.builtin.shell: |
+      apt update
+      snap install docker
+    become: true
+    args:
+      chdir: /tmp
+  
+  # must be root the first time. later we can add to docker group
+  - name: Pull Docker Image
+    ansible.builtin.shell: |
+      docker pull cloudcustodian/c7n  
+    become: true
+    args:
+      chdir: /tmp

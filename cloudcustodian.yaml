@@ -38,9 +38,3 @@
     become: true
     args:
       chdir: /tmp
-
-  - name: Pull Docker Image
-    ansible.builtin.shell: |
-      docker pull cloudcustodian/c7n  
-    args:
-      chdir: /tmp
