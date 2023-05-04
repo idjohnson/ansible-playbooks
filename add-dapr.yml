@@ -1,0 +1,58 @@
+---
+- name: Dapr and Sample
+  hosts: AnnaMacbook
+
+  tasks:
+  - name: Install dapr cli
+    ansible.builtin.shell: |
+      wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh
+      chmod 755 ./install.sh
+      sudo ./install.sh
+    become: true
+    args:
+      chdir: /tmp
+      
+  - name: Dapr Init
+    ansible.builtin.shell: |
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+      dapr init -k
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Install Helm
+    ansible.builtin.shell: |
+      curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null
+      apt-get install apt-transport-https --yes
+      echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
+      apt-get update
+      apt-get install helm
+    become: true
+    args:
+      chdir: /
+
+  - name: Add Bitnami Chart
+    ansible.builtin.shell: |
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+      helm repo add bitnami https://charts.bitnami.com/bitnami
+      helm repo update
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Install Redis
+    ansible.builtin.shell: |
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+      helm install redis bitnami/redis
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Add Calculator with Appconfig
+    ansible.builtin.shell: |
+      git clone https://github.com/dapr/samples.git
+      kubectl apply -f samples/knative-distributed-calculator/deploy/
+    become: true
+    args:
+      chdir: /tmp
+
