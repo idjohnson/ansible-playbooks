@@ -50,8 +50,25 @@
 
   - name: Add Calculator with Appconfig
     ansible.builtin.shell: |
-      git clone https://github.com/dapr/samples.git
-      kubectl apply -f samples/knative-distributed-calculator/deploy/
+      git clone https://github.com/dapr/quickstarts.git
+      kubectl apply -f quickstarts/tutorials/distributed-calculator/deploy/
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Add OTel Chart
+    ansible.builtin.shell: |
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+      helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts --set mode=deployment
+      helm repo updae
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Install OTel
+    ansible.builtin.shell: |
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+      helm install opentelemetry-collector open-telemetry/opentelemetry-collector --set mode=deployment
     become: true
     args:
       chdir: /tmp
