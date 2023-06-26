@@ -1,0 +1,60 @@
+---
+- name: Install BTop
+  hosts: all
+
+  tasks:
+  - name: Update apt
+    ansible.builtin.shell: |
+      apt-get update
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Install Dependencies
+    ansible.builtin.shell: |
+      apt-get install -y coreutils sed git build-essential gcc-10 g++-10
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Download btop
+    ansible.builtin.shell: |
+      # Clean if needed
+      rm -rf /tmp/btop || true
+      rmdir /tmp/btop || true
+
+      # Clone
+      git clone --recursive https://github.com/aristocratos/btop.git /tmp/btop
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Make
+    ansible.builtin.shell: |
+      make QUIET=true CXX=g++-10
+    become: true
+    args:
+      chdir: /tmp/btop
+
+  - name: Make
+    ansible.builtin.shell: |
+      umask 0002
+      make QUIET=true CXX=g++-10
+    become: true
+    args:
+      chdir: /tmp/btop
+
+  - name: Make Install
+    ansible.builtin.shell: |
+      umask 0002
+      make install CXX=g++-10
+    become: true
+    args:
+      chdir: /tmp/btop
+
+  - name: Test
+    ansible.builtin.shell: |
+      btop --version
+    become: true
+    args:
+      chdir: /tmp/btop
