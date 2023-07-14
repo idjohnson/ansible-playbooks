@@ -1,0 +1,8 @@
+- name: Check if IP Changed
+  hosts: all
+
+  tasks:
+  - name: Run Script
+    ansible.builtin.shell: |
+      ./testNewIp.sh {{ APIKEY }}
+
