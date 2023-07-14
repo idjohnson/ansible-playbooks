@@ -2,7 +2,9 @@
   hosts: all
 
   tasks:
+  - name: Transfer the script
+    copy: src=testNewIp.sh dest=/tmp mode=0755
+
   - name: Run Script
-    ansible.builtin.shell: |
-      ./testNewIp.sh {{ APIKEY }}
+    command: sh /tmp/testNewIp.sh {{ APIKEY }}
 
