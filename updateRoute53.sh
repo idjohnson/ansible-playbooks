@@ -22,5 +22,6 @@ if [ "$5" = "DOIT" ]; then
    echo "==================================================="
    rm -f /tmp/MYHugeChangeset.json || true
    aws route53 list-resource-record-sets --hosted-zone-id $FROMHZ | jq ".ResourceRecordSets[] | select(.ResourceRecords[0].Value==\"$FROMIP\")" | sed 's/^{/{ "Action": "UPSERT", "ResourceRecordSet": {/g' | sed 's/^}/} },/g' | sed "s/$FROMIP/$MYIP/" | tr -d '\n' | xargs -0 -I {} echo ' {"Comment": "Update All Homed IPs to New IP", "Changes": [ {}] }' | sed 's/},] }/} ] }/g' | jq > /tmp/MYHugeChangeset.json
-   aws route53 change-resource-record-sets --hosted-zone-id $FROMHZ --change-batch file://tmp/MYHugeChangeset.json
+   cd /tmp
+   aws route53 change-resource-record-sets --hosted-zone-id $FROMHZ --chang-batch file://MYHugeChangeset.json
 fi
