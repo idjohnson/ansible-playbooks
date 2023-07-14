@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 MYIP="`host -4 myip.opendns.com resolver1.opendns.com | tail -n1 | sed 's/.* //' | tr -d '\n'`"
-HARBOR="`host -4 .harbor.freshbrewed.science resolver1.opendns.com | tail -n1 | sed 's/.* //' | tr -d '\n'`"
+HARBOR="`host -4 harbor.freshbrewed.science resolver1.opendns.com | tail -n1 | sed 's/.* //' | tr -d '\n'`"
 
 if [ "$MYIP" = "$HARBOR" ]; then
    echo "Strings are Equal . $MYIP matches $HARBOR"
