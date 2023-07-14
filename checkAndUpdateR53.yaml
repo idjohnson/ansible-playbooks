@@ -1,0 +1,10 @@
+- name: Update R53
+  hosts: all
+
+  tasks:
+  - name: Transfer the script
+    copy: src=checkAndUpdateR53.sh dest=/tmp mode=0755
+
+  - name: Run Script
+    command: sh /tmp/checkAndUpdateR53.sh {{ AWSHZ }} {{ DNSTOCHECK }} {{ APIKEY }} {{ AWSACCESSKEY }} {{ AWSACCESSSECRET }}
+
