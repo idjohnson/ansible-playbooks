@@ -1,0 +1,14 @@
+# e.g.
+# HZ: Z39E8QFU0F9PZP
+# DNS to check: harbor.freshbrewed.science
+- name: Update R53
+  hosts: all
+
+  tasks:
+  - name: Transfer the script
+    copy: src=updateRoute53.sh dest=/tmp mode=0755
+
+  # use ACTION=dryrun or ACTION=DOIT
+  - name: Run Script
+    command: sh /tmp/updateRoute53.sh {{ AWSHZ }} {{ DNSTOCHECK }} {{ AWSACCESSKEY }} {{ AWSACCESSSECRET }} {{ ACTION }}
+
