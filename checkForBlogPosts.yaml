@@ -24,11 +24,14 @@
   - name: Install GH CLI
     command: NONINTERACTIVE=1 brew install gh
 
+  - name: debug sanity
+    command: |
+       cd /tmp/jekyll
+       ls
+
   - name: Check for PRs
     ansible.builtin.shell: |
-      export GITHUB_TOKEN={{ GHTOKEN }}
-      cd /tmp/jekyll
-      /tmp/findAndMergeBlogPosts.sh
+      ./findAndMergeBlogPosts.sh /tmp/jekyll {{ GHTOKEN }}
     args:
       chdir: /tmp
 
