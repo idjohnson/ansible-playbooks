@@ -8,7 +8,7 @@
     register: register_ghco
 
   - name: Checkout Blog Repo if DNE
-    command: git clone https://idjohnson:{{ GHTOKEN }}//idjohnson/jekyll-blog.git /tmp/jekyll
+    command: git clone https://idjohnson:{{ GHTOKEN }}@github.com/idjohnson/jekyll-blog.git /tmp/jekyll
     when: not register_ghco.stat.exists
 
   - name: go to main and update
