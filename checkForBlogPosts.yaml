@@ -1,0 +1,33 @@
+- name: Check for Blog Posts
+  hosts: all
+
+  tasks:
+  - name: Check For Dir
+    stat:
+      path: /tmp/jekyll
+    register: register_ghco
+
+  - name: Checkout Blog Repo if DNE
+    command: git clone https://idjohnson:{{ GHTOKEN }}//idjohnson/jekyll-blog.git /tmp/jekyll
+    when: not register_ghco.stat.exists
+
+  - name: go to main and update
+    command: |
+       cd /tmp/jekyll
+       git checkout main
+       git pull
+
+  - name: Transfer the script
+    copy: src=findAndMergeBlogPosts.sh dest=/tmp mode=0755
+
+  # use ACTION=dryrun or ACTION=DOIT
+  - name: Install GH CLI
+    command: NONINTERACTIVE=1 brew install gh
+
+  - name: Check for PRs
+    command: |
+       export GITHUB_TOKEN={{ GHTOKEN }}
+       cd /tmp/jekyll
+       /tmp/findAndMergeBlogPosts.sh
+
+
