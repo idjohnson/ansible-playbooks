@@ -25,9 +25,12 @@
     command: NONINTERACTIVE=1 brew install gh
 
   - name: Check for PRs
+    ansible.builtin.shell: |
+      export GITHUB_TOKEN={{ GHTOKEN }}
+      cd /tmp/jekyll
+      /tmp/findAndMergeBlogPosts.sh
+    args:
+      chdir: /tmp
     command: |
-       export GITHUB_TOKEN={{ GHTOKEN }}
-       cd /tmp/jekyll
-       /tmp/findAndMergeBlogPosts.sh
 
 
