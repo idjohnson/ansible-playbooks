@@ -12,10 +12,8 @@
     when: not register_ghco.stat.exists
 
   - name: go to main and update
-    command: |
-       cd /tmp/jekyll
-       git checkout main
-       git pull
+    ansible.builtin.shell: |
+      cd /tmp/jekyll && git checkout main && git pull
 
   - name: Transfer the script
     copy: src=findAndMergeBlogPosts.sh dest=/tmp mode=0755
