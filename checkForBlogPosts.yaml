@@ -31,6 +31,4 @@
       /tmp/findAndMergeBlogPosts.sh
     args:
       chdir: /tmp
-    command: |
-
 
