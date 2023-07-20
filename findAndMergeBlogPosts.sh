@@ -8,6 +8,22 @@ set -x
 for PNUM in `gh pr list --json number -q '.[] | .number'`; do
    echo "PNUM: $PNUM"
 
+   # sync
+   export DESTBR=`gh pr view $PNUM --json baseRefName | jq -r .baseRefName`
+   export FROMBR=`gh pr view $PNUM --json headRefName | jq -r .headRefName`
+
+   # checkout the dest (usually main)
+   git checkout $DESTBR
+   git pull
+   
+   # checkout the source branch
+   git checkout $FROMBR
+   git merge --no-edit $DESTBR
+
+   git push
+   
+   # merge if time...
+
    export NOWD=`date +%Y-%m-%d | tr -d '\n'`
    export DATES=`gh pr view $PNUM --json body | jq -r .body | grep 'post: ' | sed 's/.*post: \(....-..-..\).*/\1/g' | tr -d '\n'`
 
