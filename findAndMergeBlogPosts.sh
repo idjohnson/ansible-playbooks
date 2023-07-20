@@ -5,6 +5,9 @@ set +x
 export GITHUB_TOKEN="$2"
 set -x
 
+git config --global user.email isaac.johnson@gmail.com
+git config --global user.name "Isaac Johnson"
+
 for PNUM in `gh pr list --json number -q '.[] | .number'`; do
    echo "PNUM: $PNUM"
 
