@@ -20,7 +20,10 @@
 
   # use ACTION=dryrun or ACTION=DOIT
   - name: Install GH CLI
-    command: NONINTERACTIVE=1 brew install gh
+    ansible.builtin.shell: |
+      NONINTERACTIVE=1 brew install gh
+    args:
+      chdir: /tmp
 
   - name: debug sanity
     command: |
