@@ -36,6 +36,7 @@
 
   - name: Check for PRs
     ansible.builtin.shell: |
+      eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
       ./findAndMergeBlogPosts.sh /tmp/jekyll {{ GHTOKEN }}
     args:
       chdir: /tmp
