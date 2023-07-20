@@ -28,7 +28,7 @@
 
   - name: debug sanity
     ansible.builtin.shell: |
-       ls 
+       whoami
        cd ./jekyll
        ls
     args:
