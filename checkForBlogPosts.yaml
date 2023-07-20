@@ -23,6 +23,8 @@
     ansible.builtin.shell: |
       eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
       NONINTERACTIVE=1 brew install gh
+    args:
+      chdir: /tmp
 
   - name: debug sanity
     command: |
