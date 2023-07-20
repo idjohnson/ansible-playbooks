@@ -6,10 +6,10 @@ cd $1
 export GITHUB_TOKEN="$2"
 
 for PNUM in `gh pr list --json number -q '.[] | .number'`; do
-   echo "PNUM: $PNUM yo"
+   echo "PNUM: $PNUM"
 
    export NOWD=`date +%Y-%m-%d | tr -d '\n'`
-   export DATES=`gh pr view 216 --json body | jq -r .body | grep 'post: ' | sed 's/.*post: \(....-..-..\).*/\1/g' | tr -d '\n'`
+   export DATES=`gh pr view $PNUM --json body | jq -r .body | grep 'post: ' | sed 's/.*post: \(....-..-..\).*/\1/g' | tr -d '\n'`
 
    if [[ "$DATES" == "$NOWD" ]]; then
       echo "TODAY!"
