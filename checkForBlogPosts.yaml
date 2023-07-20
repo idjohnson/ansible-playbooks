@@ -21,22 +21,12 @@
   # use ACTION=dryrun or ACTION=DOIT
   - name: Install GH CLI
     ansible.builtin.shell: |
-      eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
       NONINTERACTIVE=1 brew install gh
-    args:
-      chdir: /tmp
-
-  - name: debug sanity
-    ansible.builtin.shell: |
-       whoami
-       cd ./jekyll
-       ls
     args:
       chdir: /tmp
 
   - name: Check for PRs
     ansible.builtin.shell: |
-      eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
       ./findAndMergeBlogPosts.sh /tmp/jekyll {{ GHTOKEN }}
     args:
       chdir: /tmp
