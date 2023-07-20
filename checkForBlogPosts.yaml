@@ -27,9 +27,12 @@
       chdir: /tmp
 
   - name: debug sanity
-    command: |
-       cd /tmp/jekyll
+    ansible.builtin.shell: |
+       ls 
+       cd ./jekyll
        ls
+    args:
+      chdir: /tmp
 
   - name: Check for PRs
     ansible.builtin.shell: |
