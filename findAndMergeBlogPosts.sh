@@ -21,6 +21,7 @@ for PNUM in `gh pr list --json number -q '.[] | .number'`; do
    
    # checkout the source branch
    git checkout $FROMBR
+   git pull
    git merge --no-edit $DESTBR
 
    git push
