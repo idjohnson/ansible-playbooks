@@ -13,7 +13,7 @@
 
   - name: go to main and update
     ansible.builtin.shell: |
-      cd /tmp/jekyll && git rest --hard && git checkout main && git pull
+      cd /tmp/jekyll && git reset --hard && git checkout main && git pull
 
   - name: Transfer the script
     copy: src=findAndMergeBlogPosts.sh dest=/tmp mode=0755
