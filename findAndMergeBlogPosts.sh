@@ -24,6 +24,10 @@ for PNUM in `gh pr list --json number -q '.[] | .number'`; do
    git pull
    git merge --no-edit $DESTBR
 
+   # get Modified files.. but dont match Merge:
+   # for each, take ours (assume old conflicts like index.html) - in any case - future posts always should win
+   git log --name-status -n 1 | grep -v ^Merge | grep ^M | sed 's/^.*\s//' | xargs -I % sh -c 'git checkout --ours "%" && git add "%" && git commit -m "fix %" && echo forced ours on "%"'
+
    git push
    
    # merge if time...
