@@ -8,9 +8,19 @@ set -x
 git config --global user.email isaac.johnson@gmail.com
 git config --global user.name "Isaac Johnson"
 
-for PNUM in `gh pr list --json number -q '.[] | .number'`; do
+# run in numeric order
+for PNUM in `gh pr list --json number -q '.[] | .number' | sort`; do
    echo "PNUM: $PNUM"
 
+   # for subsequent runs, wait for the last GH Workflow to get going
+   if [ -z "$firstrun" ]; then
+      echo "first invokation - no wait"
+      firstrun="done"
+   else
+      echo "better wait a few minutes"
+      sleep 180
+   fi
+   
    # sync
    export DESTBR=`gh pr view $PNUM --json baseRefName | jq -r .baseRefName`
    export FROMBR=`gh pr view $PNUM --json headRefName | jq -r .headRefName`
@@ -31,7 +41,6 @@ for PNUM in `gh pr list --json number -q '.[] | .number'`; do
    git push
    
    # merge if time...
-
    export NOWD=`date +%Y-%m-%d | tr -d '\n'`
    export DATES=`gh pr view $PNUM --json body | jq -r .body | grep 'post: ' | sed 's/.*post: \(....-..-..\).*/\1/g' | tr -d '\n'`
 
@@ -41,6 +50,9 @@ for PNUM in `gh pr list --json number -q '.[] | .number'`; do
    else
       echo "Not Today"
    fi
+
+   # Doing many at once requires a sleep between runs
+   sleep 120
 done
 
 exit
