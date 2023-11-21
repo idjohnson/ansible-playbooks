@@ -1,0 +1,19 @@
+- name: Check for Broken Services
+  hosts: all
+
+  tasks:
+  - name: Transfer the script
+    copy: src=checkWebsiteAndPage.sh dest=/tmp mode=0755
+
+  - name: Check Immich
+    ansible.builtin.shell: |
+      ./checkWebsiteAndPage.sh  https://photos.freshbrewed.science {{ RESENDTOKEN }} {{ FROMEMAIL }} {{ TOEMAIL }}
+    args:
+      chdir: /tmp
+
+  - name: Check GBWebUI
+    ansible.builtin.shell: |
+      # Known fail - to test
+      ./checkWebsiteAndPage.sh  https://gbwebui.freshbrewed.science {{ RESENDTOKEN }} {{ FROMEMAIL }} {{ TOEMAIL }}
+    args:
+      chdir: /tmp
