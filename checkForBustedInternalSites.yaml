@@ -7,13 +7,7 @@
 
   - name: Check Immich
     ansible.builtin.shell: |
-      ./checkWebsiteAndPage.sh  https://photos.freshbrewed.science {{ RESENDTOKEN }} {{ FROMEMAIL }} {{ TOEMAIL }}
-    args:
-      chdir: /tmp
-
-  - name: Check GBWebUI
-    ansible.builtin.shell: |
-      # Known fail - to test
-      ./checkWebsiteAndPage.sh  https://gbwebui.freshbrewed.science {{ RESENDTOKEN }} {{ FROMEMAIL }} {{ TOEMAIL }}
+      ./checkWebsiteAndPage.sh  {{ item }} {{ RESENDTOKEN }} {{ FROMEMAIL }} {{ TOEMAIL }}
+    loop: "{{ hostlist.split(',') }}"
     args:
       chdir: /tmp
