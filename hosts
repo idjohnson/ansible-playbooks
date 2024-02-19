@@ -1,0 +1,10 @@
+mail.testfake.com
+
+[webservers]
+foo.testfake.com
+bar.testfake.com
+
+[dbservers]
+one.testfake.com
+two.testfake.com
+three.testfake.com
