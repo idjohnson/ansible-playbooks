@@ -6,7 +6,7 @@
     copy: src=backupK8s.sh dest=/tmp mode=0755
 
   - name: Create K8s backup
-    command: sh /tmp/checkAndUpdateR53.sh
+    command: sh /tmp/backupK8s.sh
     args:
       chdir: /tmp
 
