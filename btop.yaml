@@ -5,7 +5,7 @@
   tasks:
   - name: Update apt
     ansible.builtin.shell: |
-      apt-get update
+      apt-get update --allow-releaseinfo-change
     become: true
     args:
       chdir: /tmp
