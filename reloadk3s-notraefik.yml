@@ -28,7 +28,7 @@
     ansible.builtin.shell: |
       export GCSFUSE_REPO=gcsfuse-`lsb_release -c -s`
       rm -f /etc/apt/sources.list.d/gcsfuse.list || true
-      echo "deb https://packages.cloud.google.com/apt $GCSFUSE_REPO main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list
+      echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list
       curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
       apt-get update
       apt-get install -y gcsfuse
@@ -57,7 +57,7 @@
       
   - name: Install K3s
     ansible.builtin.shell: |
-      curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="{{ k3sversion }}" K3S_KUBECONFIG_MODE="644" INSTALL_K3S_EXEC="--tls-san {{ extingress.ip }}" sh -
+      curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="{{ k3sversion }}" K3S_KUBECONFIG_MODE="644" INSTALL_K3S_EXEC="--{{ disableword | default('no-deploy') }} traefik --tls-san {{ extingress.ip }}" sh -
     become: true
     args:
       chdir: /tmp

@@ -1,0 +1,82 @@
+---
+- name: Setup Datadog
+  hosts: all
+
+  tasks:
+  - name: Install Helm
+    ansible.builtin.shell: |
+      curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null
+      apt-get install apt-transport-https --yes
+      echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
+      apt-get update
+      apt-get install helm
+
+  - name: Create DD Secret 
+    ansible.builtin.shell: |
+      kubectl delete secret my-dd-apikey || true
+      kubectl create secret generic my-dd-apikey --from-literal=api-key=$(az keyvault secret show --vault-name idjhomelabakv --name ddapikey -o json | jq -r .value | tr -d '\n')
+
+  - name: Add DD Repo
+    ansible.builtin.shell: |
+      helm repo add datadog https://helm.datadoghq.com
+      helm repo update
+    become: true
+    args:
+      chdir: /tmp
+
+  - name: Create Initial DD Values Templates 
+    ansible.builtin.shell: |
+      # Fetch APPKEY      
+      export APPKEY=`az keyvault secret show --vault-name idjhomelabakv --name ddappkey -o json | jq -r .value | tr -d '\n'`
+      
+      # Create Helm Values
+      cat >/tmp/ddvalues2.yaml <<EOF
+      agents:
+        rbac:
+          create: true
+          serviceAccountName: default
+      clusterAgent:
+        metricsProvider:
+          createReaderRbac: true
+          enabled: true
+          service:
+            port: 8443
+            type: ClusterIP
+          useDatadogMetrics: true
+        rbac:
+          create: true
+          serviceAccountName: default
+        replicas: 2
+      clusterChecksRunner:
+        enabled: true
+        rbac:
+          create: true
+          serviceAccountName: default
+        replicas: 2
+      datadog:
+        apiKeyExistingSecret: my-dd-apikey
+        apm:
+          enabled: true
+          port: 8126
+          portEnabled: true
+        appKey: ${APPKEY}
+        clusterName: {{ clusterName }}
+        logs:
+          containerCollectAll: true
+          enabled: true
+        networkMonitoring:
+          enabled: true
+        orchestratorExplorer:
+          enabled: true
+        processAgent:
+          enabled: true
+          processCollection: true
+        tags: []
+      targetSystem: linux
+      EOF
+
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+      helm install my-dd-release -f /tmp/ddvalues2.yaml datadog/datadog      
+    args:
+      chdir: /tmp
+
