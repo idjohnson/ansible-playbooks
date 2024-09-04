@@ -1,0 +1,35 @@
+
+- name: Install GCSFuse
+  hosts: all
+
+  tasks:
+  - name: Add Google Prereqs
+    ansible.builtin.shell: |
+       DEBIAN_FRONTEND=noninteractive apt update -y
+       DEBIAN_FRONTEND=noninteractive apt install -y apt-transport-https ca-certificates gnupg curl
+    become: true
+
+  - name: Add Google Apt Repo and Key
+    ansible.builtin.shell: |
+       curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+       echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+    become: true
+
+  - name: Install gcloud cli
+    ansible.builtin.shell: |
+       DEBIAN_FRONTEND=noninteractive apt update -y
+       DEBIAN_FRONTEND=noninteractive apt install -y google-cloud-cli
+    become: true
+
+  - name: Add Google Pkgs Apt Repo and Key
+    ansible.builtin.shell: |
+       export GCSFUSE_REPO=gcsfuse-`lsb_release -c -s`
+       echo "deb https://packages.cloud.google.com/apt $GCSFUSE_REPO main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list
+       curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+    become: true
+
+  - name: Install gcsfuse
+    ansible.builtin.shell: |
+       DEBIAN_FRONTEND=noninteractive apt update -y
+       DEBIAN_FRONTEND=noninteractive apt install -y fuse gcsfuse
+    become: true
