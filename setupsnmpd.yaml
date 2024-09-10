@@ -1,0 +1,30 @@
+- name: Install SNMPD
+  hosts: all
+
+  tasks:
+  - name: Add Prereqs and snmpd
+    ansible.builtin.shell: |
+       DEBIAN_FRONTEND=noninteractive apt update -y
+       DEBIAN_FRONTEND=noninteractive apt install -y wget curl snmpd
+    become: true
+
+  - name: Add Prereqs and snmpd
+    ansible.builtin.shell: |
+       curl -o /usr/local/bin/distro https://www.observium.org/files/distro
+       chmod +x /usr/local/bin/distro
+    become: true
+
+  - name: Copy snmpd config
+    ansible.builtin.template:
+       src: files/snpd.conf.j2
+       dest: /etc/snmp/snmpd.conf
+
+  - name: set perms
+    ansible.builtin.shell: |
+       chmod 600 /etc/snmp/snmpd.conf
+    become: true
+
+  - name: Start snmpd
+    ansible.builtin.shell: |
+       service snmpd start
+    become: true
