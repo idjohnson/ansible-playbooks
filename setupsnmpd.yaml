@@ -16,7 +16,7 @@
 
   - name: Copy snmpd config
     ansible.builtin.template:
-       src: files/snpd.conf.j2
+       src: files/snmpd.conf.j2
        dest: /etc/snmp/snmpd.conf
 
   - name: set perms
