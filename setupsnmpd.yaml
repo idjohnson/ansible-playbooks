@@ -26,5 +26,5 @@
 
   - name: Start snmpd
     ansible.builtin.shell: |
-       service snmpd start
+       service snmpd restart
     become: true
