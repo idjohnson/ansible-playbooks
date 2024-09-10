@@ -1,5 +1,5 @@
- Listen for connections on all interfaces (both IPv4 *and* IPv6)
-agentAddress udp:161,udp6:[::1]:161
+# Listen for connections on all interfaces (both IPv4 *and* IPv6)
+agentAddress tcp:161,udp:161,udp6:[::1]:161
 
 #  Full view access
 view   all         included   .1
@@ -9,7 +9,7 @@ rocommunity {{ community }}  default    -V all
 
 #  System contact and location
 syslocation {{ syslocation }}
-syscontact {{ syscontact }}
+syscontact  {{ syscontact }}
 
 #  Disk Monitoring
 includeAllDisks  10%
