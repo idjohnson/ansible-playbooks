@@ -1,14 +1,15 @@
 #!/bin/bash
 
 # Check if required arguments are provided
-if [ $# -ne 2 ]; then
-    echo "Usage: $0 <backup_directory> <number_of_files_to_keep>"
-    echo "Example: $0 /path/to/backups 10"
+if [ $# -ne 3 ]; then
+    echo "Usage: $0 <backup_directory> <number_of_files_to_keep> <action: DRYRUN or DOIT>"
+    echo "Example: $0 /path/to/backups 10 DRYRUN"
     exit 1
 fi
 
 BACKUP_DIR="$1"
 FILES_TO_KEEP="$2"
+ACTION="$3"
 
 # Check if backup directory exists
 if [ ! -d "$BACKUP_DIR" ]; then
@@ -22,4 +23,17 @@ if ! [[ "$FILES_TO_KEEP" =~ ^[0-9]+$ ]] || [ "$FILES_TO_KEEP" -lt 1 ]; then
     exit 1
 fi
 
-find "$BACKUP_DIR" -type f -printf '%T@ %p\n' | sort -n | head -n -"$FILES_TO_KEEP" | cut -d' ' -f2- | xargs echo rm -f
+if [ "$ACTION" != "DRYRUN" ] && [ "$ACTION" != "DOIT" ]; then
+    echo "Error: Action must be either DRYRUN or DOIT"
+    exit 1
+fi
+
+if [ "$ACTION" == "DRYRUN" ]; then
+    echo "Dry run mode"
+    find "$BACKUP_DIR" -type f -printf '%T@ %p\n' | sort -n | head -n -"$FILES_TO_KEEP" | cut -d' ' -f2- | xargs echo rm -f
+fi
+
+if [ "$ACTION" == "DOIT" ]; then
+    echo "Do it mode"
+    find "$BACKUP_DIR" -type f -printf '%T@ %p\n' | sort -n | head -n -"$FILES_TO_KEEP" | cut -d' ' -f2- | xargs rm -f
+fi

@@ -8,6 +8,6 @@
   # use ACTION=dryrun or ACTION=DOIT
   - name: Run the script
     ansible.builtin.shell: |
-      ./cleanupfolder.sh {{ FOLDER }} {{ NUMBACKUPS }}
+      ./cleanupfolder.sh {{ FOLDER }} {{ NUMBACKUPS }} {{ ACTION}}
     args:
       chdir: /tmp
