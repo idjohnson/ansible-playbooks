@@ -1,0 +1,12 @@
+- name: Install Azure DevOps
+  hosts: all
+
+  tasks:
+  - name: Transfer the script
+    copy: src=azdoadd.sh dest=/tmp mode=0755
+
+  - name: Run Installer
+    ansible.builtin.shell: |
+      /tmp/azdoadd.sh {{ AZDOORG }} {{ AZDOPOOL }} {{ AZDOPAT }}
+    args:
+      chdir: /home/builder
