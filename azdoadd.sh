@@ -8,9 +8,9 @@ if [ $# -ne 3 ]; then
 fi
 
 AZURE_ORG="$1"
-PAT_TOKEN="$2"
+POOL_NAME="$2"
+PAT_TOKEN="$3"
 AGENT_NAME=$(hostname)
-POOL_NAME="$3"
 MYUSERNAME=$(whoami)
 
 # Create and navigate to agent directory
