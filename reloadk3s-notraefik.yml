@@ -44,7 +44,7 @@
       chdir: /tmp
 
 - name: Update Primary
-  hosts: AnnaMacbook
+  hosts: "{{ primaryhost }}"
 
   tasks:
   - name: Uninstall previous k3s
@@ -120,7 +120,7 @@
       chdir: /tmp
 
 - name: Update Workers
-  hosts: builder-MacBookPro2:isaac-MacBookPro
+  hosts: "!{{ primaryhost }}"  # This will target all hosts except the primary
 
   tasks:
   - name: Uninstall previous k3s
@@ -136,8 +136,8 @@
       pwd  
       ifconfig | grep 192
       echo "TEST1"
-      echo {{ hostvars['AnnaMacbook']['nodetokenresult'].stdout }}
+      echo {{ hostvars[primaryhost]['nodetokenresult'].stdout }}
 
   - name: Install k3s Agent
     ansible.builtin.shell: |
-      curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="{{ k3sversion }}" K3S_URL=https://{{ hosts[0].name }}:6443 K3S_TOKEN={{ hostvars['AnnaMacbook']['nodetokenresult'].stdout }} sh -
+      curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="{{ k3sversion }}" K3S_URL=https://{{ hosts[0].name }}:6443 K3S_TOKEN={{ hostvars[primaryhost]['nodetokenresult'].stdout }} sh -
