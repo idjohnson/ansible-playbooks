@@ -1,0 +1,12 @@
+- name: Save AKV K8s Int
+  hosts: all
+
+  tasks:
+  - name: Transfer the script
+    copy: src=setk8s.sh dest=/tmp mode=0755
+
+  - name: SaveThisK8sInt
+    command: sh /tmp/setK8s.sh
+    args:
+      chdir: /tmp
+
