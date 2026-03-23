@@ -6,7 +6,7 @@
     copy: src=setk8s.sh dest=/tmp mode=0755
 
   - name: SaveThisK8sInt
-    command: sh /tmp/setK8s.sh
+    command: sh /tmp/setk8s.sh
     args:
       chdir: /tmp
 
