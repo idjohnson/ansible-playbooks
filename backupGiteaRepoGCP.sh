@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check if required arguments are provided
-if [ $# -ne 6 ]; then
+if [ $# -ne 5 ]; then
     echo "Usage: $0 <repo name> <repo to backup> <bucket> <base64 credentials JSON> <action: DRYRUN or DOIT>"
     echo "Example: $0 fbsnew git@gitea.freshbrewed.science:builder/fbsnew.git mytestbucket XXXXXX  DRYRUN"
     exit 1
