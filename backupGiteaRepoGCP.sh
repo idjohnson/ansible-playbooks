@@ -40,6 +40,7 @@ echo "tmp_dir: $tmp_dir"
 
 ## Export and use credentials
 echo $GCPCREDS | base64 --decode > "$tmp_dir/credentials.json"
+export PATH=$PATH:/home/builder/google-cloud-sdk/bin
 gcloud auth activate-service-account --key-file="$tmp_dir/credentials.json"
 
 export GIT_TERMINAL_PROMPT=0
